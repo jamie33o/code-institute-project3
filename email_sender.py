@@ -2,16 +2,16 @@ from email.message import EmailMessage
 import ssl
 import smtplib
 import os
-import json
+import os
 
-email_cred = os.environ.get("EMAIL_CREDS")
-email_cred_dict = json.loads(email_cred)
 
+PW = os.environ.get("PW")
+SENDER_EMAIL= os.environ.get("SENDER_EMAIL")
 
 def send_email():
 
-    email_sender = email_cred_dict.get("email_sender")
-    email_password = email_cred_dict.get("email_password")
+    email_sender = SENDER_EMAIL
+    email_password = PW
 
     email_receiver = "giftsforyou83@gmail.com"
 
