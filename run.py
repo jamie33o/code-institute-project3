@@ -32,7 +32,7 @@ called_numbers_list = []
 
 def main():
     """ main fuction calls the number calls function in a for loop until all the numbers are called"""
-    #send_email()
+    send_email()
     print("Welcome to MEGA BINGO the game is about to start get ready!!!")
     print("The first number is: ")
     for number in number_list :
