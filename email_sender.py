@@ -4,7 +4,10 @@ import smtplib
 
 def send_email():
 
-    
+    email_sender = ""
+    email_password = ""
+
+    email_receiver = ""
 
     subject = "Bingo books"
     body = "Books"
