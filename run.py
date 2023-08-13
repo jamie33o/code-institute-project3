@@ -1,7 +1,7 @@
 import time
 from number_generator import list_random_numbers
 from email_sender import send_email
-
+from create_book import create_bingo_book
 
 
 delay_seconds = 2  # Set the delay time in seconds
@@ -15,6 +15,7 @@ called_numbers_list = []
 
 def main():
     """ main fuction calls the number calls function in a for loop until all the numbers are called"""
+    create_bingo_book()
     print("Welcome to MEGA BINGO the game is about to start get ready!!!")
     print("The first number is: ")
     for number in number_list :
