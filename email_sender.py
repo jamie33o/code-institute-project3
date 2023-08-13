@@ -2,20 +2,17 @@ from email.message import EmailMessage
 import ssl
 import smtplib
 import os
-import os
-
 
 PW = os.environ.get("PW")
 SENDER_EMAIL= os.environ.get("SENDER_EMAIL")
 
-print(SENDER_EMAIL)
-def send_email():
-
+def send_email(email):
+    """Sends email to user"""
     email_sender = SENDER_EMAIL
     email_password = PW
     
 
-    email_receiver = "giftsforyou83@gmail.com"
+    email_receiver = email
 
     subject = "Bingo books"
     body = "Books ddkd"
