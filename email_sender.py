@@ -3,15 +3,15 @@ import ssl
 import smtplib
 import os
 
+# my email and password
 PW = os.environ.get("PW")
 SENDER_EMAIL= os.environ.get("SENDER_EMAIL")
 
-def send_email(email):
+def send_email(email, file_name,pdf_buffer):
     """Sends email to user"""
     email_sender = SENDER_EMAIL
     email_password = PW
     
-
     email_receiver = email
 
     subject = "Bingo books"
@@ -22,6 +22,9 @@ def send_email(email):
     em["To"] = email_receiver
     em["Subject"] = subject
     em.set_content(body)
+    # add the PDF buffer as an attachment
+    pdf_attachment = pdf_buffer.getvalue()
+    em.add_attachment(pdf_attachment, filename=file_name, maintype="application", subtype="pdf")
 
     context = ssl.create_default_context()
 
