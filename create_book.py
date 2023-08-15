@@ -6,7 +6,7 @@ from io import BytesIO
 from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
-
+import re
 # sets what im authorized to use with google cloud services
 SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -22,7 +22,7 @@ GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 SHEET = GSPREAD_CLIENT.open("mega-bingo")
 
 # get the bingo book sheet
-bingo_book_sheet = SHEET.worksheet("bingo-book")
+bingo_book_sheet = SHEET.worksheet("bingo-books")
 # gets the numbers called sheet
 numbers_called_sheet = SHEET.worksheet("numbers-called")
 
@@ -32,7 +32,7 @@ def create_bingo_book():
     book_numbers = list(range(1,91))
     # list of lists of numbers for each row of the bingo book sheet and spaces
     book_rows_list = []
-
+    store_book = []
     # Sort the numbers into groups of 10 e.g. 1-10 ,11-20
     grouped_numbers = [book_numbers[i:i+10] for i in range(0, len(book_numbers), 10)]
 
@@ -41,30 +41,40 @@ def create_bingo_book():
         empty_strings = [""] * 8
         group.extend(empty_strings)
         random.shuffle(group)
+    
+    # adds the book id to first row
+    book_rows_list.insert(0,["123"])
 
     # Iterate through each index of the list of numbers and creates a new list that match the rows so 
     # first number will be between 1-10 second will be between 11-20 and so on so then first column numbers will be 1-10 second 11-20
     for index in range(18):
        book_rows_list.append([group[index] for group in grouped_numbers])
 
-    # adds the name and book id to first row
-    book_rows_list.insert(0,["Mega Bingo\nBook ID: 123"])
-    
+   
     # this adds the list of empty strings to match the merged rows after every 3 rows in the bingo book
     for index in [4, 8, 12,16,20]:      
-        book_rows_list.insert(index,[""] * 7 )
-        
-    # this appends the rows to the bingo book in google sheets
-    #bingo_book_sheet.append_rows(book_rows_list)
-    pdf_buffer = create_pdf(book_rows_list)
-    send_email("GIFTSFORYOU83@GMAIL.COM","bingobook.pdf", pdf_buffer)
+        book_rows_list.insert(index,[""] * 7)
+
+    for row in book_rows_list:
+        joined_row = ','.join(map(str, row))  # turn each list in the list of lists to a string
+        store_book.append(joined_row)  # Append the string to the store_book list
+
+    # Insert data below the located title row
+    bingo_book_sheet.insert_row(store_book)
+
+    # adds the name and book id to first row
+    book_rows_list.insert(0,["Mega Bingo\nBook ID: 123"])
+
+    search_woksheet()
+    #pdf_buffer = create_pdf(book_rows_list)
+    #send_email("GIFTSFORYOU83@GMAIL.COM","bingobook.pdf", pdf_buffer)
 
        
 def create_pdf(row_list):   
     """creates a bingo book pdf with the numberers generated and calls email_sender 
     to send the pdf as attachment in an email to the users email"""
 
-    # store pdf created in bytes
+    # store pdf in bytes
     pdf_buffer = BytesIO()
     # Create a PDF document
     doc = SimpleDocTemplate(pdf_buffer, pagesize=letter)
@@ -92,3 +102,14 @@ def create_pdf(row_list):
     # Build PDF
     doc.build(elements)
     return pdf_buffer
+
+
+def search_woksheet():
+    
+    search_number = 123
+
+    
+    matching_cells = bingo_book_sheet.findall(str(search_number), in_column=1)
+
+    for cell in matching_cells:
+        print("Found at:", cell.address, "book:",bingo_book_sheet.row_values(cell.row))
