@@ -1,12 +1,9 @@
+"""this module is for working with google sheets it has functions for creating the bingo book and searching the worksheets """
 import gspread
 from google.oauth2.service_account import Credentials
 from email_sender import send_email
 import random
-from io import BytesIO
-from reportlab.lib.pagesizes import letter
-from reportlab.lib import colors
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
-import re
+from create_pdf import bingo_book_to_pdf
 # sets what im authorized to use with google cloud services
 SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -26,13 +23,17 @@ bingo_book_sheet = SHEET.worksheet("bingo-books")
 # gets the numbers called sheet
 numbers_called_sheet = SHEET.worksheet("numbers-called")
 
-def create_bingo_book():
-    """generates the numbers for the bingo book then appends them to the bingo book sheet in google sheets"""
+def create_bingo_book(email):
+    """generates the numbers for the bingo book then appends them to the bingo book sheet in google sheets 
+    and then creates_pdf.py turns the numbers to pdf bingo book and email_sender send it as attachment to the user"""
     # creates a list of 90 numbers
     book_numbers = list(range(1,91))
     # list of lists of numbers for each row of the bingo book sheet and spaces
     book_rows_list = []
     store_book = []
+
+    id = generate_new_id()
+    
     # Sort the numbers into groups of 10 e.g. 1-10 ,11-20
     grouped_numbers = [book_numbers[i:i+10] for i in range(0, len(book_numbers), 10)]
 
@@ -43,14 +44,13 @@ def create_bingo_book():
         random.shuffle(group)
     
     # adds the book id to first row
-    book_rows_list.insert(0,["123"])
+    book_rows_list.insert(0,[id])
 
     # Iterate through each index of the list of numbers and creates a new list that match the rows so 
     # first number will be between 1-10 second will be between 11-20 and so on so then first column numbers will be 1-10 second 11-20
     for index in range(18):
        book_rows_list.append([group[index] for group in grouped_numbers])
 
-   
     # this adds the list of empty strings to match the merged rows after every 3 rows in the bingo book
     for index in [4, 8, 12,16,20]:      
         book_rows_list.insert(index,[""] * 7)
@@ -59,49 +59,28 @@ def create_bingo_book():
         joined_row = ','.join(map(str, row))  # turn each list in the list of lists to a string
         store_book.append(joined_row)  # Append the string to the store_book list
 
-    # Insert data below the located title row
+    # Insert book to google sheets row
     bingo_book_sheet.insert_row(store_book)
 
     # adds the name and book id to first row
-    book_rows_list.insert(0,["Mega Bingo\nBook ID: 123"])
+    book_rows_list[0][0] = f"Mega Bingo\nBook ID: {id}"
 
-    search_woksheet()
-    #pdf_buffer = create_pdf(book_rows_list)
-    #send_email("GIFTSFORYOU83@GMAIL.COM","bingobook.pdf", pdf_buffer)
+
+    pdf_buffer = bingo_book_to_pdf(book_rows_list)
+    send_email(email,"bingobook.pdf", pdf_buffer)
 
        
-def create_pdf(row_list):   
-    """creates a bingo book pdf with the numberers generated and calls email_sender 
-    to send the pdf as attachment in an email to the users email"""
-
-    # store pdf in bytes
-    pdf_buffer = BytesIO()
-    # Create a PDF document
-    doc = SimpleDocTemplate(pdf_buffer, pagesize=letter)
-    elements = []
-    
-    # Create a grid table from row lists data
-    table = Table(row_list)
-    table.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.white),
-        ('TEXTCOLOR', (0, 0), (-1, 0), colors.red),
-        ("SPAN", (0,0), (8,0)),
-        ("SPAN", (0,4), (8,4)),
-        ("SPAN", (0,8), (8,8)),
-        ("SPAN", (0,12), (8,12)),
-        ("SPAN", (0,16), (8,16)),
-        ("SPAN", (0,20), (8,20)),
-        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-        ('GRID', (0, 0), (-1, -1), 1, colors.black),
-    ]))
-    elements.append(table)
-    
-    # Build PDF
-    doc.build(elements)
-    return pdf_buffer
+def generate_new_id():
+    """generates a new id by searching the ids in google sheets and finding the last id and adding one to it"""
+    all_new_ids = bingo_book_sheet.col_values(1)
+    last_id = 0
+    new_id = 1
+    for id in all_new_ids:
+        id =  int(id)  
+        if id > last_id:
+            new_id = id + 1
+        last_id = id
+    return new_id
 
 
 def search_woksheet():

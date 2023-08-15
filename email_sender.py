@@ -1,3 +1,5 @@
+"""This module is for sending emails to the user """
+
 from email.message import EmailMessage
 import ssl
 import smtplib
