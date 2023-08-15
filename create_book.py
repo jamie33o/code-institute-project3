@@ -1,27 +1,10 @@
 """this module is for working with google sheets it has functions for creating the bingo book and searching the worksheets """
-import gspread
-from google.oauth2.service_account import Credentials
+
 from email_sender import send_email
 import random
 from create_pdf import bingo_book_to_pdf
-# sets what im authorized to use with google cloud services
-SCOPE = [
-    "https://www.googleapis.com/auth/spreadsheets",
-    "https://www.googleapis.com/auth/drive.file",
-    "https://www.googleapis.com/auth/drive"
-    ]
+from google_sheets import generate_new_id,store_book_numbers
 
-# get the credentials from the config var
-CREDS = Credentials.from_service_account_file("creds.json")
-SCOPED_CREDS = CREDS.with_scopes(SCOPE)
-GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
-# open the google sheets for mega bingo
-SHEET = GSPREAD_CLIENT.open("mega-bingo")
-
-# get the bingo book sheet
-bingo_book_sheet = SHEET.worksheet("bingo-books")
-# gets the numbers called sheet
-numbers_called_sheet = SHEET.worksheet("numbers-called")
 
 def create_bingo_book(email):
     """generates the numbers for the bingo book then appends them to the bingo book sheet in google sheets 
@@ -60,35 +43,17 @@ def create_bingo_book(email):
         store_book.append(joined_row)  # Append the string to the store_book list
 
     # Insert book to google sheets row
-    bingo_book_sheet.insert_row(store_book)
+    store_book_numbers(store_book)
 
     # adds the name and book id to first row
     book_rows_list[0][0] = f"Mega Bingo\nBook ID: {id}"
 
-
+    # crete pdf from the numbers
     pdf_buffer = bingo_book_to_pdf(book_rows_list)
+    #send the pdf to user in email
     send_email(email,"bingobook.pdf", pdf_buffer)
 
        
-def generate_new_id():
-    """generates a new id by searching the ids in google sheets and finding the last id and adding one to it"""
-    all_new_ids = bingo_book_sheet.col_values(1)
-    last_id = 0
-    new_id = 1
-    for id in all_new_ids:
-        id =  int(id)  
-        if id > last_id:
-            new_id = id + 1
-        last_id = id
-    return new_id
 
 
-def search_woksheet():
-    
-    search_number = 123
 
-    
-    matching_cells = bingo_book_sheet.findall(str(search_number), in_column=1)
-
-    for cell in matching_cells:
-        print("Found at:", cell.address, "book:",bingo_book_sheet.row_values(cell.row))
