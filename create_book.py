@@ -83,6 +83,13 @@ def create_bingo_book(email):
     send_email(email,"bingobook.pdf", pdf_buffer)
 
        
+def convert_string_to_list(stored_book):
+# Reverting the string-represented rows back to lists
+    book_rows_list = []
 
+    for string_row in stored_book:
+        split_row = string_row.split(',')  # Split the string into individual elements
+        row_as_list = list(map(str, split_row))  # Convert the elements to strings if needed
+        book_rows_list.append(row_as_list)  # Append the list to the book_rows_list
 
 

@@ -10,8 +10,8 @@ PW = os.environ.get("PW")
 SENDER_EMAIL= os.environ.get("SENDER_EMAIL")
 
 def send_email(email, file_name,pdf_buffer):
-    """Sends email to user"""
-    email_sender = SENDER_EMAIL
+    """Sends email to user with pdf buffer attached"""
+    email_sender = email_sender
     email_password = PW
     
     email_receiver = email

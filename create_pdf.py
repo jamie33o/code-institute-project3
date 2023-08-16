@@ -4,8 +4,6 @@ from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 
-
-
 def bingo_book_to_pdf(row_list):   
     """creates a bingo book pdf with the row_list data  and returns it as bytes """
 
