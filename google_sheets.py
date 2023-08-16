@@ -26,14 +26,11 @@ def store_book_numbers(book):
     bingo_book_sheet.insert_row(book)
 
 
-def search_woksheet():
-    
-    search_number = 123
+def search_woksheet(book_id):
+    matching_cell = bingo_book_sheet.find(str(book_id), in_column=1)
+    found_bingo_book = bingo_book_sheet.row_values(matching_cell.row)
+    return found_bingo_book
 
-    matching_cells = bingo_book_sheet.findall(str(search_number), in_column=1)
-
-    for cell in matching_cells:
-        print("Found at:", cell.address, "book:",bingo_book_sheet.row_values(cell.row))
 
 def generate_new_id():
     """generates a new id by searching the ids in google sheets and finding the last id and adding one to it"""
