@@ -30,7 +30,7 @@ def create_bingo_book(email):
 
     # this block of code adds 4 spaces to to each row by randomly taking 
     # 4 numbers and creates a new list from the numbers that are replaced
-    # then it is added back on to the old list this is so the columns of numbers stay in position e.g, 10,20,30
+    # then it is added back on to the old list this is so the columns of numbers stay in position e.g, 10's,20's,30's
     replacement_string = ""
     new_book_rows_list = []
     for row in book_rows_list:# loops trough each row and replaces number not in numbers to replace with an empty string
@@ -67,9 +67,7 @@ def create_bingo_book(email):
     for index in [4, 8, 12,16,20]:      
         book_rows_list.insert(index,[""] * 7)
 
-    for row in book_rows_list:
-        joined_row = ','.join(map(str, row))  # turn each list in the list of lists to a string
-        store_book.append(joined_row)  # Append the string to the store_book list
+    store_book = turn_lists_to_string(book_rows_list)
 
     # Insert book to google sheets row
     store_book_numbers(store_book)
@@ -83,13 +81,21 @@ def create_bingo_book(email):
     send_email(email,"bingobook.pdf", pdf_buffer)
 
        
-def convert_string_to_list(stored_book):
+def convert_string_to_list(input_list):
 # Reverting the string-represented rows back to lists
-    book_rows_list = []
+    output_list = []
 
-    for string_row in stored_book:
+    for string_row in input_list:
         split_row = string_row.split(',')  # Split the string into individual elements
         row_as_list = list(map(str, split_row))  # Convert the elements to strings if needed
-        book_rows_list.append(row_as_list)  # Append the list to the book_rows_list
+        output_list.append(row_as_list)  # Append the list to the book_rows_list
+    return output_list
 
 
+
+def turn_lists_to_string(input_list):
+    output_list = []
+    for row in input_list:
+            joined_row = ','.join(map(str, row))  # turn each list in the list of lists to a string
+            output_list.append(joined_row)  # Append the string to the store_book list
+    return output_list
