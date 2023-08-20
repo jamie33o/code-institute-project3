@@ -25,8 +25,11 @@ def store_book_numbers(book):
      # Insert book to google sheets row
     bingo_book_sheet.insert_row(book)
 
+def store_numbers_called():
+    numbers_called_sheet.insert_rows(numbers_called_sheet)
 
 def search_woksheet(book_id):
+    """search the google sheet by id's in the first column"""
     matching_cell = bingo_book_sheet.find(str(book_id), in_column=1)
     found_bingo_book = bingo_book_sheet.row_values(matching_cell.row)
     return found_bingo_book
