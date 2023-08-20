@@ -34,33 +34,31 @@ class BingoGame:
                 self.set_state("matched_single_line")
         elif self.state == "matched_single_line":
             print("Congratulations! You matched a line.")
-            number_generator.pause_number = True
-            if not number_generator.pause_number:
-                print("Now we are looking for two lines.")
-                self.set_state("match_two_line")
+            input("Press enter to continue: ")
+            print("Now we are looking for two lines.")
+            self.set_state("match_two_line")
         elif self.state == "match_two_line":
             if check_for_two_lines(called_numbers,user_bingo_book) or len(called_numbers) == 40:
                 self.set_state("matched_two_lines")
 
         elif self.state == "matched_two_lines":
             print("Congratulations! You have matched two lines.")
-            number_generator.pause_number = True
-            if not number_generator.pause_number:
-                print("Now we are looking for a full house")
-                self.set_state("match_full_house")
+            input("Press enter to continue: ")
+            print("Now we are looking for a Full House.")
+            self.set_state("match_full_house")
         elif self.state == "match_full_house":
             if check_for_fullhouse(called_numbers,user_bingo_book) or len(called_numbers) == 87:
                 self.set_state("matched_full_house")
         elif self.state == "matched_full_house":
             print("Congratulations! You have a full house.")
-            number_generator.pause_number = True
-            if not number_generator.pause_number:
-                self.set_state("end")
-
+            input("Press enter to continue: ")
+            self.set_state("end")
         elif self.state == "end":
             print("Game over.")
+            input("Press enter to go to menu: ")
             self.set_state("menu")
-
         elif self.state == "break":
-            number_generator.pause_number = True # pause number calls
+            print("We will take a short brake now")
+
+            input("Press enter to continue")
         
