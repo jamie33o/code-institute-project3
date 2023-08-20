@@ -1,9 +1,12 @@
 from create_book import create_bingo_book,convert_string_to_list
 from google_sheets import search_woksheet
-
+from game_state import BingoGame
+from number_generator import call_numbers
+   
+game_state = BingoGame()
 
 def menu():
-    
+
     print("****Option menu please choose an option*****")
     print("Option 1. Type 1 to get your bingo book")
     print("Option 2. Type 2 if you havent received you bingo book")
@@ -16,15 +19,18 @@ def menu():
 
     if choice == "1":
         print("You selected Option 1")
-        print("To get your bingo book please enter your email address \n if you want more than one then type the the amount of book's you want max 3 \n")
-        amount = int(input("Enter amount: \n"))
+        print("To get your bingo book please enter your email address")
         user_email = input("Enter your email: \n")
+
+        print("if you want more than one then type the the amount of book's you want max 3")
+        amount = int(input("Enter amount: \n"))
+        
         print(f"Email you entered is: {user_email}")
         try_again = input("Is this correct type Y for yes and N for No Y/N?")
         if try_again == "N" or try_again == "n":
             user_email = input("Please Enter your email again: \n")
-        if amount > 0:
-            for _ in amount:
+        if amount > 1:
+            for _ in range(amount):
                 print("If you are getting a book for a friend and want to send it to there email enter there email otherwise ")
                 next_email = input("Enter friend's email: \n")
                 if next_email != "":
@@ -34,10 +40,11 @@ def menu():
                     if try_again == "N" or try_again == "n":
                         user_email = input("Please Enter your email again: \n")
                 create_bingo_book(user_email)
-            else:
-                create_bingo_book(user_email)
-                print("Please check your email to get your bingo book")
-                
+        else:
+            create_bingo_book(user_email)
+            print("Please check your email to get your bingo book")
+            game_state.set_state("menu")
+            game_state.play()
     elif choice == "2":
         print("You selected Option 2")
         print("We are sorry you didn't receive your book")
@@ -47,11 +54,9 @@ def menu():
     elif choice == "4":
         print("You selected Option 4")
     elif choice == "5":
-        print("You selected Option 5")
-        print("Please enter your book id to start the game")
-        book_id = input("Book ID: /n")
-        user_bingo_book = convert_string_to_list(search_woksheet(book_id))
-        start_game(user_bingo_book)
+        print("You selected Option 5")            
+        game_state.set_state("play")
+        game_state.play()
     elif choice == "6":
         print("You selected Option 6")
     elif choice == "7":
@@ -59,3 +64,5 @@ def menu():
     else:
         print("Invalid choice")
 
+def check_state():
+    return game_state.play()
