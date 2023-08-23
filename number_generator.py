@@ -20,18 +20,13 @@ called_numbers_list = []
 def call_numbers():
     print("The game is about to start get ready!!!")
     print("The first number is: ")
-    pause_number = False
+    
     for number in number_list :
         print(number)
         print("Next we have: ")
         called_numbers_list.append(number) # appends the numbers called to the list
-        time.sleep(delay_seconds)  # Delay for the specified time
         display_menu.check_state()
-        if pause_number or len(number_list) == 50:
-            if len(number_list) == 50:
-                print("You can take a brake now")
-            input("Press enter to continue: ")
-            pause_number = False
-
+        time.sleep(delay_seconds)  # Delay for the specified time            
+            
 def get_callednumbers_list():
     return called_numbers_list
