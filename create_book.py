@@ -87,7 +87,8 @@ def convert_string_to_list(input_list):
 
     for string_row in input_list:
         split_row = string_row.split(',')  # Split the string into individual elements
-        row_as_list = list(map(str, split_row))  # Convert the elements to strings if needed
+        row_as_list = list(map(lambda element: element if element == "" else int(element), split_row)) 
+
         output_list.append(row_as_list)  # Append the list to the book_rows_list
     return output_list
 
