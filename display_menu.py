@@ -25,7 +25,7 @@ def menu():
         print("if you want more than one then type the the amount of book's you want max 3")
         amount = int(input("Enter amount: \n"))
         
-        print(f"Email you entered is: {user_email}")
+        print(f"The Email you entered is: {user_email}")
         try_again = input("Is this correct type Y for yes and N for No Y/N?")
         if try_again == "N" or try_again == "n":
             user_email = input("Please Enter your email again: \n")
@@ -65,4 +65,4 @@ def menu():
         print("Invalid choice")
 
 def check_state():
-    return game_state.play()
+    game_state.play()

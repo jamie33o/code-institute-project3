@@ -10,7 +10,7 @@ from google_sheets import search_woksheet
 class BingoGame:
     def __init__(self):
         self.state = "menu"  # Initial state is "menu"
-        self.user_bingo_book = [] 
+        self.user_bingo_book = [] # create the user_bingo book when bingogame object created
 
     def set_state(self, new_state):
         """sets the state the game is in"""
@@ -24,7 +24,6 @@ class BingoGame:
         elif self.state =="play":
             print("Please enter your book id to start the game")
             book_id = input("Book ID:\n")
-
             self.user_bingo_book = convert_string_to_list(search_woksheet(book_id))  
             self.set_state("calling_numbers")
             self.play()

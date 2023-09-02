@@ -9,3 +9,4 @@ node_modules/
 creds.json
 .env
 .vscode
+env.py

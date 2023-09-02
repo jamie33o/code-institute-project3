@@ -4,15 +4,15 @@ from email.message import EmailMessage
 import ssl
 import smtplib
 import os
+if os.path.exists("env.py"):
+    import env
 
-# my email and password
-PW = os.environ.get("PW")
-SENDER_EMAIL= os.environ.get("SENDER_EMAIL")
+
 
 def send_email(email, file_name,pdf_buffer):
     """Sends email to user with pdf buffer attached"""
-    email_sender = email_sender
-    email_password = PW
+    email_sender = os.environ.get("SENDER_EMAIL")
+    email_password = os.environ.get("PW")
     
     email_receiver = email
 
